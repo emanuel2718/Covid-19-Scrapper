@@ -9,5 +9,5 @@
 
 
 ## Future Implementations:
-- [ ] Add more data alternatives (i.e Death Rates, etc.)
+- [ ] Add more data alternatives (i.e Death Rates, % of Populations, etc.)
 - [ ] Make it interactive (Build an interactive UI)
