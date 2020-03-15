@@ -1,6 +1,7 @@
 # Covid-19-Scrapper
 	I was bored and in quarantine due to COVID-19 so I wrote a simple web scrapper
 	script to get COVID-19 data from https://virustracker.com free API.
+	Sources used: WHO, CDC, ECDC, NHC, DXY
 	
 
 ## Output:
