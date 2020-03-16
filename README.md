@@ -1,12 +1,23 @@
 # Covid-19-Scrapper
-	I was bored and in quarantine due to COVID-19 so I wrote a simple web scrapper
-	script to get COVID-19 data from https://virustracker.com free API.
-	Sources used: WHO, CDC, ECDC, NHC, DXY
+This started as a simple web scrapper script for COVID-19 data.
+This was done as a way for me to practice Python programming language and at the same time
+gather important data for me and whoever want to use this script.
+All the COVID-19 data is scraped using https://virustracker.com free API.
+Sources used: WHO, CDC, ECDC, NHC, DXY
+	
+For the original source of the data please visit: [World Health Organization website](https://www.who.int)
 	
 
-## Output:
+## Output 1 (Worldwide Data):
 
-<img width="853" alt="output" src="https://user-images.githubusercontent.com/55965894/76710164-9280b180-66db-11ea-934e-f1d3dd7b0bb7.png">
+<img width="717" alt="worldwide_data_output" src="https://user-images.githubusercontent.com/55965894/76808630-b79a2080-67be-11ea-809c-a61b61a42562.png">
+
+## Output 2:
+	By selecting option 2; a pager page, containing all the countries and their 
+	respective abbreviations, will appear on the screen. To quit just press 'q'.
+
+## Output 3 (Country-specific Data):
+<img width="725" alt="country_data_output" src="https://user-images.githubusercontent.com/55965894/76808635-b963e400-67be-11ea-9bad-2388ccd2ec05.png">
 
 
 ## Future Implementations:
@@ -14,3 +25,4 @@
 - [x] Add more data alternatives (i.e Death Rates, % of Populations, etc.)
 - [x] Make it interactive (Add main menu for alternatives)
 - [ ] Make a GUI
+- [ ] Make a webpage
