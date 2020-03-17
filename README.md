@@ -8,11 +8,6 @@ Sources used: WHO, CDC, ECDC, NHC, DXY
 	
 For the original source of the data please visit: [World Health Organization website](https://www.who.int)
 	
-## How to use:
-You can see worldwide data by just pressing '1'. This will display COVID-19 data for the whole world.
-You can see the available country options and their respective two-letter code abbreviations by typing '2'.
-To see specific countries data: Press '3' and either type the country name or two-letter code for the respective country.
-Input checking is case insensitive.
 
 ## Output 1 (Worldwide Data):
 
