@@ -76,12 +76,27 @@ def evaluate_option(user_option):
         country = 'https://thevirustracker.com/free-api?countryTotal={}'.format(get_country_code())
         get_country_stats(country)
 
+
     else:
         pass
 
 
+def check_country_is_valid(country):
+    l = []
+    fhandler = open('countries.txt', 'r')
+    for line in fhandler:
+        temp = line.strip('\n').split(":")
+        for e in temp:
+            l.append(e)
+    fhandler.close()
+    if country.upper() in l:
+        return True
+    else:
+        return False
+
 def get_worldwide_stats(url):
     # Check locale for output formatting?
+    # TODO: Format the print staments
     response = requests.get(url)
     content = json.loads(response.content.decode())
 
@@ -144,6 +159,15 @@ def get_country_code():
     user_input = input("Please enter a country name or two-letter code "\
                        + "of country to see COVID-19 stats.\n")
     print("\n")
+    if check_country_is_valid(user_input):
+        pass
+    else:
+        print("Please enter a valid country name or two-letter code.")
+        print("Consult the available country list by chossing option '2'.")
+        print('----------------------------------------------------------------------')
+        sleep(3)
+        main()
+
     with open('countries-json/country-by-abbreviation.json') as json_file:
         # Format the input
         # TODO: need to check if country is not in database
@@ -154,7 +178,6 @@ def get_country_code():
                     country_code = line['ABBREVIATION']
                     return country_code
         else:
-            #coutry_code = user_input
             return user_input
 
 
