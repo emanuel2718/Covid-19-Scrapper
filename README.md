@@ -29,3 +29,6 @@ respective abbreviations, will appear on the screen. To quit just press 'q'.
 - [ ] Display changes for the day in data (i.e +- X amount of cases today)
 - [ ] Make a GUI
 - [ ] Make a webpage
+
+[![license](https://img.shields.io/github/license/DAVFoundation/captain-n3m0.svg?style=flat-square)](https://github.com/DAVFoundation/captain-n3m0/blob/master/LICENSE)
+
