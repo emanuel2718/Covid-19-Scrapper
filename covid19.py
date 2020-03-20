@@ -10,6 +10,15 @@ import yaml
 
 
 def main():
+    """Program main driver.
+
+    The user can choose between 1-4 menu options.
+    1. Wordwide stats
+    2. List of countries
+    3. Specific country stats (Full country or two-letter code)
+    4. Exit the program
+    """
+
     done = False
     while not done:
         print_menu()
@@ -33,6 +42,8 @@ def main():
 
 
 def print_menu():
+    """Prints the menu to the user."""
+
     print()
     print("COVID-19 Stats Scrapper. Please, select a number." + "\n")
     print("1. To see worldwide stats.")
@@ -45,6 +56,8 @@ def print_menu():
 
 
 def check_validity(option):
+    """Check if the input received is a valid digit 1 to 4 inclusive."""
+
     if option.isdigit():
         numeric_option = int(option)
         if numeric_option >=1 and numeric_option <= 4:
@@ -56,6 +69,8 @@ def check_validity(option):
 
 
 def evaluate_option(user_option):
+    """Evaluate the valid input from the user."""
+
     if user_option == 1:
         worldwide_url = 'https://thevirustracker.com/free-api?global=stats'
         get_worldwide_stats(worldwide_url)
@@ -81,6 +96,13 @@ def evaluate_option(user_option):
 
 
 def check_country_is_valid(country):
+    """Given the country full name or two-letter code; check if it's a valid
+    country by searching the countries.txt file for a match.
+
+    @param Country full name or country two-letter code.
+    @return True if country is valid False otherwise.
+    """
+
     l = []
     fhandler = open('countries.txt', 'r')
     for line in fhandler:
@@ -94,7 +116,12 @@ def check_country_is_valid(country):
         return False
 
 def get_worldwide_stats(url):
-    #TODO: Check locale for output formatting?
+    """Pull the world wide data from:
+    https://thevirustracker.com/free-api?global=stats
+
+    @param url of the worldwide stats
+    """
+
     response = requests.get(url)
     content = json.loads(response.content.decode())
 
@@ -115,6 +142,12 @@ def get_worldwide_stats(url):
 
 
 def get_country_stats(data):
+    """Pull the world wide data from:
+    https://thevirustracker.com/free-api?global=stats
+    https://thevirustracker.com/free-api?countryTotal={@param}
+
+    @param url of the specific country stats
+    """
     response = requests.get(data)
     content = json.loads(response.content.decode())
 
@@ -145,6 +178,10 @@ def ask_user_if_continue():
 
 
 def get_country_code():
+    """Retrieve the two-letter code from the .json file
+    and return the code.
+    """
+
     country_code = ""
     user_input = input("Please enter a country name or two-letter code "\
                        + "of country to see COVID-19 stats.\n")
@@ -159,8 +196,6 @@ def get_country_code():
         main()
 
     with open('countries-json/country-by-abbreviation.json') as json_file:
-        # Format the input
-        # TODO: need to check if country is not in database
         user_input  = user_input.upper()
         if len(user_input) > 2:
             for line in yaml.safe_load(json_file):
