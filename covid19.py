@@ -1,8 +1,10 @@
 #!/usr/bin/python
 from pydoc import pager
 from time import sleep
-import requests
+import argparse
 import json
+import requests
+import sys
 import yaml
 
 # Simple web scraping script to get covid-19 data using https://thevirustracker.com free API.
@@ -10,6 +12,51 @@ import yaml
 
 
 def main():
+
+    if len(sys.argv) == 2:
+
+        if sys.argv[1] == '-h' or sys.argv[1] == '--help':
+            parser = argparse.ArgumentParser(
+                description='''COVID Scrapper v0.0.2''',
+                epilog='''Thanks for using our service.''')
+
+            parser.add_argument('-w', help='Print Worldwide COVID-19 data')
+            parser.add_argument('-list',
+                        help='Print a list of available countries and codes')
+            parser.add_argument('-s', metavar='[country]',
+                        help='Print specific country COVID-19 data')
+            args = parser.parse_args()
+
+        if sys.argv[1] == '-w':
+            get_worldwide_stats(WORLDWIDE_URL)
+            sys.exit(1)
+
+        elif sys.argv[1] == '-list':
+            print_list_to_user()
+            sys.exit(1)
+
+    elif len(sys.argv) > 2:
+        # Account for countries with spaces (i.e United States)
+        string = ""
+        index = 2
+
+        while index < len(sys.argv):
+            if sys.argv[index] != " ":
+                string += sys.argv[index] + " "
+                index += 1
+
+        string = string.strip()
+        # This acts as if the user chose option #3 in the menu.
+        country = 'https://thevirustracker.com/free-api?countryTotal={}'\
+            .format(get_country_code(string))
+
+        get_country_stats(country)
+
+    else:
+        # No cli-arguments given.
+        menu_driver()
+
+def menu_driver():
     """Program main driver.
 
     The user can choose between 1-4 menu options.
@@ -38,9 +85,6 @@ def main():
             sleep(2)
             print('------------------------------------------------')
 
-
-
-
 def print_menu():
     """Prints the menu to the user."""
 
@@ -52,8 +96,6 @@ def print_menu():
 
     print("3. To type a country or abrreviation and see their stats.")
     print("4. Exit")
-
-
 
 def check_validity(option):
     """Check if the input received is a valid digit 1 to 4 inclusive."""
@@ -72,10 +114,24 @@ def evaluate_option(user_option):
     """Evaluate the valid input from the user."""
 
     if user_option == 1:
-        worldwide_url = 'https://thevirustracker.com/free-api?global=stats'
-        get_worldwide_stats(worldwide_url)
+        get_worldwide_stats(WORLDWIDE_URL)
 
     elif user_option == 2:
+        print_list_to_user()
+
+    elif user_option == 3:
+
+        # Check if there are command line arguments
+        country_input = input("Please enter a country name or two-letter"\
+                           + " code of country to see COVID-19 stats.\n")
+        print("\n")
+        country = 'https://thevirustracker.com/free-api?countryTotal={}'\
+            .format(get_country_code(country_input))
+        get_country_stats(country)
+    else:
+        pass
+
+def print_list_to_user():
         with open('countries-json/country-by-abbreviation.json') as json_file:
             number = 0
             string = ""
@@ -85,15 +141,6 @@ def evaluate_option(user_option):
                 number += 1
         number = 0
         pager(string)
-
-    elif user_option == 3:
-        country = 'https://thevirustracker.com/free-api?countryTotal={}'.format(get_country_code())
-        get_country_stats(country)
-
-
-    else:
-        pass
-
 
 def check_country_is_valid(country):
     """Given the country full name or two-letter code; check if it's a valid
@@ -138,7 +185,11 @@ def get_worldwide_stats(url):
           (int(content['results'][0]['total_cases']))) * 100
     print("Death Rate: {0:.2f}%".format(death_rate), '\n')
 
-    ask_user_if_continue()
+    if len(sys.argv) == 1:
+        ask_user_if_continue()
+    # We are on script mode. Exit.
+    else:
+        sys.exit()
 
 
 def get_country_stats(data):
@@ -164,47 +215,48 @@ def get_country_stats(data):
           (int(content['countrydata'][0]['total_cases']))) * 100
     print("Death Rate: {0:.2f}%".format(death_rate), '\n')
 
-    ask_user_if_continue()
+    if len(sys.argv) == 1:
+        ask_user_if_continue()
+    # We are on script mode. Exit.
+    else:
+        sys.exit(0)
 
 
 def ask_user_if_continue():
     decision = input("Would you like to continue using COVID-19 Scrapper? (y/n)")
     if decision == 'y':
-        # Maybe use clear here?
         print_menu()
+
     elif decision == 'n':
         print("Thank you for using COVID-19 Scrapper. Stay safe!")
         exit()
 
 
-def get_country_code():
+def get_country_code(country):
     """Retrieve the two-letter code from the .json file
     and return the code.
     """
 
     country_code = ""
-    user_input = input("Please enter a country name or two-letter code "\
-                       + "of country to see COVID-19 stats.\n")
-    print("\n")
-    if check_country_is_valid(user_input):
+    if check_country_is_valid(country):
         pass
     else:
         print("Please enter a valid country name or two-letter code.")
-        print("Consult the available country list by chossing option '2'.")
+        print("Consult the available country list with -list")
         print('----------------------------------------------------------------------')
-        sleep(3)
-        main()
+        sys.exit(1)
 
     with open('countries-json/country-by-abbreviation.json') as json_file:
-        user_input  = user_input.upper()
-        if len(user_input) > 2:
+        country  = country.upper()
+        if len(country) > 2:
             for line in yaml.safe_load(json_file):
-                if line['COUNTRY'] == user_input:
+                if line['COUNTRY'] == country:
                     country_code = line['ABBREVIATION']
                     return country_code
         else:
-            return user_input
+            return country
 
 
 if __name__ == "__main__":
+    WORLDWIDE_URL = 'https://thevirustracker.com/free-api?global=stats'
     main()
