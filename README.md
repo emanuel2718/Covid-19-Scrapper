@@ -8,17 +8,39 @@ Sources used: WHO, CDC, ECDC, NHC, DXY
 	
 For the original source of the data please visit: [World Health Organization website](https://www.who.int)
 	
+# Usage:
 
-## Output 1 (Worldwide Data):
+Clone this repo:
+```sh
+git clone https://github.com/emanuel2718/Covid-19-Scrapper.git
+```
+
+There are two main ways to get the data:
+1. Run the program with: ```python covid19.py```
+2. Or type optional arguments:
+
+	1. To get worldwide data only: ```python -w```
+	
+	2. To get list of countries and two-letter country codes available: ```python -list```
+	
+	3. To get data for a specific country: ```python -s <country>``` (Country can be two-letter country code)
+	
+	4. To get help: ```python -h``` or ```python --help```
+	
+
+	
+## Screenshots of the non-script mode:
+
+#### Output 1:
 
 <img width="717" alt="worldwide_data_output" src="https://user-images.githubusercontent.com/55965894/76808630-b79a2080-67be-11ea-809c-a61b61a42562.png">
 
-## Output 2:
+#### Output 2:
 
-By selecting option 2; a pager page, containing all the countries and their 
-respective abbreviations, will appear on the screen. To quit just press 'q'.
+	By selecting option 2; a pager page, containing all the countries and their 
+	respective abbreviations, will appear on the screen. To quit just press 'q'.
 
-## Output 3 (Country-specific Data):
+#### Output 3 (Country-specific Data):
 <img width="725" alt="country_data_output" src="https://user-images.githubusercontent.com/55965894/76808635-b963e400-67be-11ea-9bad-2388ccd2ec05.png">
 
 
