@@ -208,7 +208,6 @@ def get_country_stats(data):
     print('Total Active Cases: {val:,}'.format(val=content['countrydata'][0]['total_active_cases']))
     print('Total Cases Recovered: {val:,}'.format(val=content['countrydata'][0]['total_recovered']))
     print('Total Unresolved Cases: {val:,}'.format(val=content['countrydata'][0]['total_unresolved']))
-    print('Total New Cases Today: {val:,}'.format(val=content['countrydata'][0]['total_active_cases']))
     print('Total Deaths Reported: {val:,}'.format(val=content['countrydata'][0]['total_deaths']), '\n')
 
     death_rate = ((int(content['countrydata'][0]['total_deaths'])) /\
