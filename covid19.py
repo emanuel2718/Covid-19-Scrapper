@@ -169,7 +169,7 @@ def get_worldwide_stats(url):
     @param url of the worldwide stats
     """
 
-    response = requests.get(url)
+    response = requests.get(url, headers={"User-Agent": "XY"})
     content = json.loads(response.content.decode())
 
     print()
@@ -199,7 +199,7 @@ def get_country_stats(data):
 
     @param url of the specific country stats
     """
-    response = requests.get(data)
+    response = requests.get(data, headers={"User-Agent": "XY"})
     content = json.loads(response.content.decode())
 
 
