@@ -1,17 +1,27 @@
-#!/usr/bin/python
+#!/usr/bin/env python
+
+# Author: by Emanuel Ramirez on March 15, 2020
+# Date: March 15, 2020
+
+from matplotlib import pyplot
 from pydoc import pager
 from time import sleep
 import argparse
+import datetime as dt
 import json
+import matplotlib
+import pandas as pd
 import requests
+import seaborn
 import sys
 import yaml
 
-# Simple web scraping script to get covid-19 data using https://thevirustracker.com free API.
-# Created by Emanuel Ramirez on March 15, 2020
 
 
 def main():
+    ''' Simple web scraping script to get covid-19 data using:
+    https://thevirustracker.com free API.
+    '''
 
     if len(sys.argv) == 2:
 
@@ -21,6 +31,7 @@ def main():
                 epilog='''Thanks for using our service.''')
 
             parser.add_argument('-w', help='Print Worldwide COVID-19 data')
+            parser.add_argument('-g', help='Plot COVID-19 data')
             parser.add_argument('-list',
                         help='Print a list of available countries and codes')
             parser.add_argument('-s', metavar='[country]',
@@ -29,11 +40,15 @@ def main():
 
         if sys.argv[1] == '-w':
             get_worldwide_stats(WORLDWIDE_URL)
-            sys.exit(1)
+            sys.exit(0)
 
         elif sys.argv[1] == '-list':
             print_list_to_user()
-            sys.exit(1)
+            sys.exit(0)
+
+        elif sys.argv[1] == '-g':
+            prep_data()
+            sys.exit(0)
 
     elif len(sys.argv) > 2:
         # Account for countries with spaces (i.e United States)
@@ -74,7 +89,7 @@ def menu_driver():
         option_info = check_validity(user_input)
         if option_info != -1:
             pass
-            if option_info == 4:
+            if option_info == 5:
                 done = True
                 print("\n")
                 print("Thank you for using COVID-19 Scrapper. Stay safe!")
@@ -88,6 +103,7 @@ def menu_driver():
 def print_menu():
     """Prints the menu to the user."""
 
+    # TODO: think about plotting option in menu.
     print()
     print("COVID-19 Stats Scrapper. Please, select a number." + "\n")
     print("1. To see worldwide stats.")
@@ -95,14 +111,15 @@ def print_menu():
           + " respective abbreviations.")
 
     print("3. To type a country or abrreviation and see their stats.")
-    print("4. Exit")
+    print("4. To visualize Total Cases in the most infected countries.")
+    print("5. Exit")
 
 def check_validity(option):
     """Check if the input received is a valid digit 1 to 4 inclusive."""
 
     if option.isdigit():
         numeric_option = int(option)
-        if numeric_option >=1 and numeric_option <= 4:
+        if numeric_option >=1 and numeric_option <= 5:
             return numeric_option
         else:
             return -1
@@ -120,7 +137,6 @@ def evaluate_option(user_option):
         print_list_to_user()
 
     elif user_option == 3:
-
         # Check if there are command line arguments
         country_input = input("Please enter a country name or two-letter"\
                            + " code of country to see COVID-19 stats.\n")
@@ -128,6 +144,8 @@ def evaluate_option(user_option):
         country = 'https://thevirustracker.com/free-api?countryTotal={}'\
             .format(get_country_code(country_input))
         get_country_stats(country)
+    elif user_option == 4:
+        prep_data()
     else:
         pass
 
@@ -172,6 +190,7 @@ def get_worldwide_stats(url):
     response = requests.get(url, headers={"User-Agent": "XY"})
     content = json.loads(response.content.decode())
 
+    #TODO: format to f strings for cleaner look
     print()
     print("Total cases: {val:,}".format(val=content['results'][0]['total_cases']))
     print("Total New cases: {val:,}".format(val=content['results'][0]['total_new_cases_today']))
@@ -202,7 +221,7 @@ def get_country_stats(data):
     response = requests.get(data, headers={"User-Agent": "XY"})
     content = json.loads(response.content.decode())
 
-
+    #TODO: format to f strings for cleaner look
     print('Country:', content['countrydata'][0]['info']['title'])
     print("Total Cases: {val:,}".format(val=content['countrydata'][0]['total_cases']))
     print('Total Active Cases: {val:,}'.format(val=content['countrydata'][0]['total_active_cases']))
@@ -219,6 +238,58 @@ def get_country_stats(data):
     # We are on script mode. Exit.
     else:
         sys.exit(0)
+
+def prep_data():
+    '''Format the data for better visualization.
+
+    Format: Date  Location   New Cases   New Deaths  Total Cases  Total Deaths
+    '''
+    amount_of_countries = int(input('How many countries would you like to'\
+                                    + ' compare data? (15 countries max.) '))
+    if amount_of_countries <= 1 or amount_of_countries > 15:
+        # Default will be 10 if the number given as parameter is too high or
+        # too low
+        amount_of_countries = 10
+
+    data = pd.read_csv('https://covid.ourworldindata.org/data/ecdc/full_data.csv')
+    # Format the dates
+    data['date'] = [dt.datetime.strptime(x, '%Y-%m-%d') for x in data['date']]
+
+    # Format colum titles
+    data.columns = ['Date', 'Country', 'New Cases', 'New Deaths', 'Total Cases',\
+                    'Total Deaths']
+    # Exclude countries from the data
+    countries_to_exclude = ['World']
+    data = data.loc[~(data['Country'].isin(countries_to_exclude))]
+    # Group the data by Location and Date. Look only for Total Cases and
+    data = pd.DataFrame(data.groupby(['Country', 'Date'])['Total Cases', \
+                                        'Total Deaths'].sum()).reset_index()
+
+    data = data.sort_values(by=['Country', 'Date'], ascending=False)
+    filtered_data = data.drop_duplicates(subset=['Country'], keep='first')
+
+    plot_data('Country', 'Total Cases', 'Total cases in the World',\
+            filtered_data, size=amount_of_countries)
+
+
+def plot_data(parameter, value, title, data, size):
+
+    '''Plot cases and deaths as bar plot for X countries.
+    Function to plot bar plots using Seaborn.
+
+    '''
+
+    f, ax = pyplot.subplots(1,1, figsize=(size*2, 5))
+    data = data.sort_values([value], ascending=False).reset_index(drop=True)
+    g = seaborn.barplot(data[parameter][0:size], data[value][0:size], palette='Set3')
+    g.set_title('Number of {} - highest 10 values'.format(title))
+    pyplot.show()
+    if len(sys.argv) <= 1:
+        print('\n')
+        ask_user_if_continue()
+    else:
+        sys.exit()
+
 
 
 def ask_user_if_continue():
