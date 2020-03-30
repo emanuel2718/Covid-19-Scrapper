@@ -14,6 +14,10 @@ Clone this repo:
 ```sh
 git clone https://github.com/emanuel2718/Covid-19-Scrapper.git
 ```
+Intall requirements:
+```sh
+pip install -r requirements.txt
+```
 
 There are two main ways to get the data:
 1. Run the program with: ```python covid19.py```

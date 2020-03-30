@@ -278,12 +278,13 @@ def plot_data(parameter, value, title, data, size):
     Function to plot bar plots using Seaborn.
 
     '''
-
+    pyplot.style.use('dark_background')
     f, ax = pyplot.subplots(1,1, figsize=(size*2, 5))
     data = data.sort_values([value], ascending=False).reset_index(drop=True)
     g = seaborn.barplot(data[parameter][0:size], data[value][0:size], palette='Set3')
     g.set_title('Number of {} - highest 10 values'.format(title))
     pyplot.show()
+
     if len(sys.argv) <= 1:
         print('\n')
         ask_user_if_continue()
