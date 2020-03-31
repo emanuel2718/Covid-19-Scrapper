@@ -282,7 +282,7 @@ def plot_data(parameter, value, title, data, size):
     f, ax = pyplot.subplots(1,1, figsize=(size*2, 5))
     data = data.sort_values([value], ascending=False).reset_index(drop=True)
     g = seaborn.barplot(data[parameter][0:size], data[value][0:size], palette='Set3')
-    g.set_title('Number of {} - highest 10 values'.format(title))
+    g.set_title('Number of {} - highest {} values'.format(title, size))
     pyplot.show()
 
     if len(sys.argv) <= 1:
