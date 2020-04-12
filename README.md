@@ -6,8 +6,13 @@ This was done as a way for me to practice Python programming language and at the
 gather important data for me and whoever want to use this script.
 All the COVID-19 data is scraped using https://virustracker.com free API.
 Sources used: WHO, CDC, ECDC, NHC, DXY
-	
+
 For the original source of the data please visit: [World Health Organization website](https://www.who.int)
+
+**WARNING:** As of 04/12/2020 this is not providing accurate data for some
+countries (i.e Puerto Rico). But countries like USA are still begin updated
+correctly; source is no longer updating the data.
+	
 	
 # Usage:
 
